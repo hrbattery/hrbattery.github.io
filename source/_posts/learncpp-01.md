@@ -1,7 +1,7 @@
 ---
 title: learncpp - 01 - C++ 基础
 date: 2025-03-17 23:02:19
-tags:
+tags: learncpp
 ---
 
 前面的章节都太过基础，所以简单摘抄一下有意思的
