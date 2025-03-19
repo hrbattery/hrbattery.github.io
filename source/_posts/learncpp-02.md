@@ -6,6 +6,8 @@ tags: learncpp
 
 开始有意思了
 
+<!-- more -->
+
 ## 2.5 局部作用域
 
 - 翻译中的“超出作用域”(Out of scope)和“离开作用域”(Get out of scope)，如果看英文就非常明显了，主要是主语的区别：
