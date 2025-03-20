@@ -8,7 +8,7 @@ tags: learncpp
 
 <!-- more -->
 
-## 4.1 基础数据类型简介
+## 4.1 - 基础数据类型简介
 
 - 变量本质上是一段可以存放信息的内存的名称，而数据类型是计算机用以将内存数据解析为有意义的值的规则
 - 一般来说，1byte=8bit
@@ -108,7 +108,6 @@ long double:	8 bytes
 ## 4.12 - 类型转换和 static_cast
 
 使用`static_cast<new_type>(expression)` 进行显式类型转换
-
 
 ## 4.17 - std::string 简介
 
