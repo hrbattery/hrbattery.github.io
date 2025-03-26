@@ -102,3 +102,224 @@ const左值引用可以也可以绑定可修改的左值，但此时就不能通
 
 **当const左值引用被绑定到一个临时对象时，临时对象的生存期将被扩展到与引用的生存期相匹配。**
 
+## 9.5 - 传递左值引用
+
+此前我们所知道的函数传参的方式只有一种：按值传递，是通过值复制的方式传递的。现在我们学另一种：**按引用传递**。
+
+不适用按值传递的原因有二：
+- 有些对象的拷贝开销很大，是非必要的拷贝，毕竟很多时候函数作用域内的变量都是用完即弃的；
+- 某些时候，我们希望在函数内修改传入的实参。
+
+```cpp
+#include <iostream>
+#include <string>
+ 
+void printValue(std::string& y) // type changed to std::string&
+{
+    std::cout << y << '\n';
+} // y is destroyed here
+ 
+int main()
+{
+    std::string x { "Hello, world!" };
+ 
+    printValue(x); // x is now passed by reference into reference parameter y (inexpensive)
+ 
+    return 0;
+}
+```
+
+如果我们定义按引用传递的参数为非const值的引用，那么其就不能接收const变量或者字面量，这极大地影响了按引用传递的实用性；同时，很多时候我们也不希望函数内可以修改传入的实参。因此，我们可以将参数定义为const的引用：
+
+```cpp
+#include <iostream>
+#include <string>
+ 
+void printValue(const int& y) // y is now a const reference
+{
+    std::cout << y << '\n';
+}
+ 
+int main()
+{
+    int x { 5 };
+    printValue(x); // ok: x is a modifiable lvalue
+ 
+    const int z { 5 };
+    printValue(z); // ok: z is a non-modifiable lvalue
+ 
+    printValue(5); // ok: 5 is a literal rvalue
+ 
+    return 0;
+}
+```
+
+这样就可以绑定任何类型的实参了。**按引用传递最好定义为const类型的引用，除非你有很好的理由（例如函数必须修改实参的值）。**
+
+**对基本数据类型使用按值传递，而对于类或者结构体使用const的按值传递。**
+
+## 9.6 指针
+
+> 大的要来了
+
+在默认情况下，变量的地址并不会返回给用户，但实际上是可以获取该地址的：使用**取地址操作符&** 就可以返回其操作变量的地址。
+
+```cpp
+#include <iostream>
+ 
+int main()
+{
+    int x{ 5 };
+    std::cout << x << '\n';  // print the value of variable x
+    std::cout << &x << '\n'; // print the memory address of variable x
+ 
+    return 0;
+}
+```
+
+> &符号在不同的语境下有不同的含义，比较容易混淆：
+> 
+> - 当后面接着类型名时，&表示一个左值引用:  `int& ref`；
+> - 当用于一元表达式时，&表示取地址运算符:  `std::cout << &x`.
+> - 当用于二元表达式时，&是按位与操作:  `std::cout << x & y`.
+
+当然，只是取得变量的地址没什么用，我们需要取得其存放的值：使用**解引用运算符\***。
+
+### 指针
+
+指针可以看作是一个持有内存地址的对象，和使用&定义引用类型类似，我们使用*定义指针类型：
+
+```cpp
+int;  // a normal int
+int&; // an lvalue reference to an int value
+ 
+int*; // a pointer to an int value (holds the address of an integer value)
+```
+
+和引用类型不同，**指针默认是不初始化的**，但这么干的话就会多出来一个**野指针**，这不好
+
+> **将军说过，指针必须初始化**
+
+一旦我们有了一个持有对象地址的指针，我们就可以用解引用操作符*来访问该地址。
+
+```cpp
+#include <iostream>
+ 
+int main()
+{
+    int x{ 5 };
+    std::cout << x << '\n'; // 打印变量 x 的值
+ 
+    int* ptr{ &x }; // ptr 保存着 x 的地址
+    std::cout << *ptr << '\n'; // 使用解引用操作符打印该地址的内容
+ 
+    return 0;
+}
+```
+
+### 指针和赋值
+
+在谈论指针的赋值时，可能有两种含义：
+
+1. 给指针赋一个新的值，使其指向其他地址
+2. 给指针解引用的结果赋新值，改变指针所指内容的值
+
+需要注意，**取地址操作符&**返回的并不是地址的字面量，它返回的是一个指向操作数地址的指针，该指针的类型取决于参数的类型。
+
+## 9.8 - 指针和const
+
+和引用类似，由于const变量的不可变性，**普通指针不能指向const变量**。讨论指针和const的关系，我们会得出三种排列组合：
+
+- 指向常量的指针：const int*
+- 常量指针：int* const
+- 指向常量的常量指针：const int* const
+
+与引用类似，指向常量的指针也可以指向非常量的变量，但该指针指向的值会被视为常量，无论最初的定义如何。
+
+## 9.9 - 按地址传递
+
+既然引用可以引申出按引用传递的传参方式，那么基于指针也可以引申出一种新的传参方式：**按地址传递**。
+
+```cpp
+#include <iostream>
+#include <string>
+ 
+void printByValue(std::string val) // The function parameter is a copy of str
+{
+    std::cout << val << '\n'; // print the value via the copy
+}
+ 
+void printByReference(const std::string& ref) // The function parameter is a reference that binds to str
+{
+    std::cout << ref << '\n'; // print the value via the reference
+}
+ 
+void printByAddress(const std::string* ptr) // The function parameter is a pointer that holds the address of str
+{
+    std::cout << *ptr << '\n'; // print the value via the dereferenced pointer
+}
+ 
+int main()
+{
+    std::string str{ "Hello, world!" };
+ 
+    printByValue(str); // pass str by value, makes a copy of str
+    printByReference(str); // pass str by reference, does not make a copy of str
+    printByAddress(&str); // pass str by address, does not make a copy of str
+ 
+    return 0;
+}
+```
+
+在传入函数时，与按引用传递不同，我们传入的是对象的指针&str。而在函数内部，我们使用*ptr解引用来获取指针对应的str的值。
+
+**除非有特殊原因要使用通过地址传递，否则最好通过引用传递而不是通过地址传递。**
+
+不过实际上其实这三种传递值的方式都是按值传递。引用通常由编译器由指针实现，而传递进去的地址可以被解引用、以此修改实参罢了，而普通形参做不到这一点。
+
+## 9.11 - 按引用返回和按地址返回
+
+参数可以花式传入函数，函数自然也可以花式传出返回值。类似的，有按引用返回和按地址返回的返回方式。
+
+```cpp
+std::string&       returnByReference(); // returns a reference to an existing std::string (cheap)
+const std::string& returnByReferenceToConst(); // returns a const reference to an existing std::string (cheap)
+const std::string* returnByPointerToConst(); // returns a const pointer to an existing std::string
+```
+
+但需要注意以下要点：
+- **永远不要通过引用返回局部变量**。这会导致悬垂引用。
+- **不要按引用返回非const的局部静态变量**，这会容易导致预期外的变量被修改。
+- 如果参数本身是按引用传递进函数的，那么按引用返回就是安全的。
+
+按地址返回的返回值是指向对象的指针，主要的优点在于**可以用nullptr来代表没有要返回的有效对象**。但代价是，可能会发生空指针解引用导致未定义行为，所以优先选择按引用返回。
+
+## 9.12 - 指针、引用和const的类型推断
+
+`auto`关键字可以让编译器根据初始化值对变量类型进行推断。默认情况下，类型推断也会删除引用修饰符。如果有需要，我们可以手动添加回来。
+
+对于`const`的处理，要分类讨论：
+
+- 如果这个`const`修饰符是修饰对象本身的，我们称其为顶层`const`，这会被类型推断所丢弃。
+- 如果这个`const`修饰符是修饰指向对象的引用或者指针，我们称其为底层`const`，这不会被类型推断所丢弃。
+
+加上类型推断时舍弃和加上修饰符的顺序问题，这可能会导致在类型推断时，有的类型会和预期有所差别。只要在使用`auto`修饰符时显式写出需要的修饰符，一般就不会有问题。
+
+```cpp
+#include <string>
+ 
+const std::string& getRef(); // some function that returns a const reference
+ 
+int main()
+{
+    auto ref1{ getRef() };        // std::string (top-level const and reference dropped)
+    const auto ref2{ getRef() };  // const std::string (const reapplied, reference dropped)
+ 
+    auto& ref3{ getRef() };       // const std::string& (reference reapplied, low-level const not dropped)
+    const auto& ref4{ getRef() }; // const std::string& (reference and const reapplied)
+ 
+    return 0;
+}
+```
+
+但与引用不同，指针是不会被丢弃的。基本只有这一点区别，总之无论是什么修饰符，尽量都明确标识出来、让自己的意图更加明确，避免导致语义不清导致的错误。
