@@ -1,3 +1,10 @@
+---
+title: arkui - Stage模型
+date: 2026-3-3
+tags: ArkUI
+---
+
+
 ![[Pasted image 20251008165000.png]]
 
 # 应用组件
