@@ -4,8 +4,7 @@ date: 2026-3-3
 tags: ArkUI
 ---
 
-
-![[Pasted image 20251008165000.png]]
+![](attachments/Pasted%20image%2020251008165000.png)
 
 # 应用组件
 
@@ -22,7 +21,8 @@ tags: ArkUI
 	- UIAbility组件是一种包含UI的应用组件，主要用于和用户交互。
 	- UIAbility组件是系统调度的基本单元，为应用提供绘制界面的窗口。一个应用可以包含一个或多个UIAbility组件。例如，在支付应用中，可以将入口功能和收付款功能分别配置为独立的UIAbility。
 	- 每一个UIAbility组件实例都会在最近任务列表中显示一个对应的任务。
-	- 当用户在执行应用启动、应用前后台切换、应用退出等操作时，系统会触发相关应用组件的生命周期回调。作为一种包含UI的应用组件，UIAbility的生命周期不可避免地与[WindowStage](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/application-window-stage)的生命周期存在关联关系。![[Pasted image 20251008172353.png]]
+	- 当用户在执行应用启动、应用前后台切换、应用退出等操作时，系统会触发相关应用组件的生命周期回调。作为一种包含UI的应用组件，UIAbility的生命周期不可避免地与[WindowStage](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/application-window-stage)的生命周期存在关联关系。
+	![](attachments/Pasted%20image%2020251008172353.png)
 	- 系统提供了singletion、multition和specified三种启动UIAbility的方式。
 		- 单实例模式下，每次调用startAbility方法时，会复用系统中已经存在的UIAbility，会调用onNewWant()回调、而不会进入onCreate()和OnWindowStageCreate()回调。
 		- 多实例模式下，每次调用startAbility方法时，会在应用进程中创建一个新UIAbility实例。
@@ -47,6 +47,7 @@ tags: ArkUI
 # 应用进程模型和线程模型
 
 现在我们有代表应用的Application，有代表模块的Module、有管理模块所有组件的AbilityStage、还有其他的各种组件，那么对应回操作系统最基本的进程和线程模型上，是什么对应关系呢？
+
 ## 进程模型
 
 在应用运行态，可能存在的进程类型有：
@@ -54,7 +55,7 @@ tags: ArkUI
 - 主进程：默认情况下，同一个应用的所有UIAbility都运行在同一个进程中，称其为主进程；
 - ExtensionAbility进程：同一应用的所有同一类型ExtensionAbility均运行在一个独立进程中。特别地，对于继承自[UIExtensionAbility](https://developer.huawei.com/consumer/cn/doc/harmonyos-references/js-apis-app-ability-uiextensionability)的ExtensionAbility，可以为每个实例配置独立进程。
 - Web渲染进程：特别的，如果有UIAbility调用了Web组件，这个Web组件的渲染是在一个独立的渲染进程的。
-![[Pasted image 20251008185601.png]]
+![](attachments/Pasted%20image%2020251008185601.png)
 
 在2in1和Tablet设备上，针对UIAbility，还支持如下特殊进程类型：
 
